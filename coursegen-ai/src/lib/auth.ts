@@ -65,6 +65,7 @@ export const authOptions:NextAuthOptions = { //this is where we have auth option
                 clientId: process.env.GOOGLE_CLIENT_ID as string,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
             })
+            //we need to creaete a next auth end point
         ]
     
 }
