@@ -6,6 +6,9 @@ import { createChapterSchema } from '@/validators/course'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from './ui/input'
+import { Separator } from './ui/separator'
+import { Button } from './ui/button'
+import { Plus, Trash } from 'lucide-react'
 
 type Props = {}
 
@@ -56,6 +59,15 @@ const CreateCourseForm = (props: Props) => {
                         }}/>
                     )
                 })}
+
+                <div className='flex items-center justify-center mt-4'>
+                    <Separator className='flex-[1]'/>
+                    <div className='mx-4'>
+                        <Button type='button' variant='secondary' className='font-semibold ml-4'>Add Unit <Plus className='w-4 h-4 ml-2 text-green-500'/> </Button>
+                        <Button type='button' variant='secondary' className='font-semibold'>Remove Unit <Trash className='w-4 h-4 ml-2 text-red-500'/> </Button>
+                    </div>
+                    <Separator className='flex-[1]'/>
+                </div>
             </form>
         </Form>
     </div>
