@@ -27,7 +27,7 @@ const Navbar = async (props: Props) => {
                 )}
                 
                 <div className='flex items-center'>
-                    {session?.user ? <UserAccountNav />:<SignInButton /> }
+                    {session?.user ? <UserAccountNav user={session.user} />:<SignInButton /> }
                 </div>
             </div>
             
