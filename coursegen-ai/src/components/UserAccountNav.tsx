@@ -4,6 +4,7 @@ import { Button } from './ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { signOut } from 'next-auth/react'
 import { LogOut } from 'lucide-react'
+import UserAvatar from './UserAvatar'
 
 type Props = {
     user: User //user is from sessoin so we import user from next autha dn not our prisma claint
@@ -13,7 +14,7 @@ const UserAccountNav = ({user}: Props) => {
   return (
     <DropdownMenu>
         <DropdownMenuTrigger>
-            <Button>Open Menu</Button>
+            <UserAvatar user={user} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
             <div className='flex items-center justify-start gap-2 p-2'>
