@@ -16,14 +16,15 @@ const CreateCourseForm = (props: Props) => {
         resolver: zodResolver(createChapterSchema),
         defaultValues:{
             title:'',
-            units:['','','']
+            units:['','','','','']
         }
     }) //tells react hhok formm tp have shape fo input type
 
     function onSubmit(data:Input){
         console.log(data)
     }
-    console.log(form.watch());
+    // console.log(form.watch());
+    form.watch();
 
 
   return (
@@ -40,6 +41,21 @@ const CreateCourseForm = (props: Props) => {
                     </FormItem>
                     )
                 }}/>
+
+                {form.watch('units').map((_,i)=>{//actually take sthe first argument and the index
+                    return(
+                        <FormField  key={i} control={form.control} name={`units.${i}`} render={({field})=>{
+                            return(
+                                <FormItem className='flex flex-col items-start w-full sm:items-center sm:flex-row'>
+                                <FormLabel className='flex-[1] text-xl'>Unit {i+1}</FormLabel>
+                                <FormControl className='flex-[6]'>
+                                    <Input placeholder='Enter the Unit' {...field}/>
+                                </FormControl>
+                                </FormItem>
+                            )
+                        }}/>
+                    )
+                })}
             </form>
         </Form>
     </div>
