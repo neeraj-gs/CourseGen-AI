@@ -3,6 +3,8 @@
 
 import { DefaultSession, NextAuthOptions } from "next-auth";
 import { prisma } from "./db";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import GoogleProvider from 'next-auth/providers/google'
 
 
 declare module 'next-auth'{ //specifiying next-auth the types
@@ -33,7 +35,9 @@ export const authOptions:NextAuthOptions = { //this is where we have auth option
         //this are a bunch of fucntinos
         jwt: async ({token}) =>{ //if we are given a jwt token, token will have id,email on it , we will search for user with that email and then we bind id and credits to the token itself
             const db_user = await prisma.user.findFirst({
-                email:token.email
+                where:{
+                    email:token.email
+                }
             })
             if(db_user){
                 token.id = db_user.id;
@@ -51,7 +55,16 @@ export const authOptions:NextAuthOptions = { //this is where we have auth option
             }
 
             return session
-        }
-    }
+        },
+  
+    },
+    secret:process.env.NEXTAUTH_SECRET as string,
+        adapter: PrismaAdapter(prisma),
+        providers:[
+            GoogleProvider({
+                clientId: process.env.GOOGLE_CLIENT_ID as string,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+            })
+        ]
     
 }
