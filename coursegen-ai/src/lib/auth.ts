@@ -1,7 +1,7 @@
 //stores our next-auth cionfigutrations and allows to connect to proejct'
 //risma adapter is used tointeract with our databse and next auth
 
-import { DefaultSession, NextAuthOptions } from "next-auth";
+import { DefaultSession, NextAuthOptions, getServerSession } from "next-auth";
 import { prisma } from "./db";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import GoogleProvider from 'next-auth/providers/google'
@@ -68,4 +68,8 @@ export const authOptions:NextAuthOptions = { //this is where we have auth option
             //we need to creaete a next auth end point
         ]
     
+}
+
+export const getAuthSession=()=>{
+    return getServerSession(authOptions); //auth optios , we ge tthe server sessoin, we get the user if loged in if not an emoty section
 }
