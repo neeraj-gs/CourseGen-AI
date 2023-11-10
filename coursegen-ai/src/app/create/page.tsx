@@ -1,4 +1,5 @@
 //this is going to be a server componet
+import CreateCourseForm from '@/components/CreateCourseForm';
 import { getAuthSession } from '@/lib/auth';
 import { InfoIcon } from 'lucide-react';
 import { redirect } from 'next/navigation';
@@ -18,7 +19,9 @@ const CreateCourse = async (props: Props) => {
             <div>
                 Enter the course title and Enter a list of units or specific topics you want to master, then our AI Model will generate the best customized course for you!!.
             </div>
+            
         </div>
+        <CreateCourseForm />
 
     </div>
     
