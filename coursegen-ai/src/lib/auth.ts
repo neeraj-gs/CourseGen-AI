@@ -1,8 +1,26 @@
 //stores our next-auth cionfigutrations and allows to connect to proejct'
 //risma adapter is used tointeract with our databse and next auth
 
-import { NextAuthOptions } from "next-auth";
+import { DefaultSession, NextAuthOptions } from "next-auth";
 import { prisma } from "./db";
+
+
+declare module 'next-auth'{ //specifiying next-auth the types
+    interface Session extends DefaultSession{
+        user:{ // we have overwritten this user with id and credits , we need to also specify other parametere , so join current uesr type
+            id:string;
+            credits:number;
+        } & DefaultSession['user'];
+    }
+}
+
+declare module 'next-auth/jwt'{ //this is for the jwt , extend type for token itself and append them to it
+    interface JWT{
+        id:string;
+        credits:number;
+    }
+}
+
 
 
 //CONfiguring Next-auth
@@ -28,7 +46,7 @@ export const authOptions:NextAuthOptions = { //this is where we have auth option
                 session.user.id = token.id;
                 session.user.name = token.name
                 session.user.email = token.email
-                session.user.image = token.image
+                session.user.image = token.picture //we use picture because we get it from google authentication
                 session.user.credits = token.credits
             }
 
