@@ -1,0 +1,22 @@
+Course Gen AI
+    Course Generation platform with AI Integrated
+    Can Create COurses and customize it as per your needs and AI will craete the Course For you. 
+    Can Add Multiple Units , and hits OpenAI API to craete courses and units and chapters. and then use YOutibe API to get the Videos with most views
+    For each chapter it hits a youtube api and then get a transcript and then geneerate questions and concept check , we will feed the transcript to open ai and it will generate questions
+    After the generation of course , we can see all the units and the youtibe video based on chatper title and summary 
+
+
+    Tech Stack:
+        1. Next Auth 
+        2. NextJs and ReatJs
+        3. Tailwind CSS and ShadCN UI
+        4. Backend - OpenAI API , Youtube API , Unsplash API 
+        5. Stripe Integration FOr apyment service 
+        6. Deploy to a VPS [DIgital Ocean provides VPS]
+        7. Github Actions CI/CD upon Code Push
+        8. Dockerizing the Project
+        9. Link up Domain Name with SSL Certificate to VPS.
+        10.MySQL
+        11.Prisama ORM
+        12.TypeScript
+        
