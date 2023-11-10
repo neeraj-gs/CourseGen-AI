@@ -3,6 +3,7 @@ import React from 'react'
 import SignInButton from './SignInButton'
 import { getAuthSession } from '@/lib/auth'
 import UserAccountNav from './UserAccountNav'
+import { ThemeToggle } from './ThemeToggle'
 
 type Props = {}
 
@@ -17,14 +18,16 @@ const Navbar = async (props: Props) => {
                 <p className='rounded-xl border-4 border-b-4 border-r-4 border-black px-2 py-1 text-xl font-bold transition-all hover:translate-y-[2px] md:block dark:border-white' >CourseGenX-AI</p>
             </Link>
             <div className='flex items-center'>
-                <Link href='/courses' className='mr-3'>Courses</Link>
+                <Link href='/courses' className='mr-5'>Courses</Link>
 
                 {session?.user && (
                     <>
-                        <Link href='/create' className='mr-3'>Create Course</Link>
-                        <Link href='/settings' className='mr-3'>Settings</Link>
+                        <Link href='/create' className='mr-5'>Create Course</Link>
+                        <Link href='/settings' className='mr-5'>Settings</Link>
                     </>
                 )}
+
+                <ThemeToggle className='mr-5' />
                 
                 <div className='flex items-center'>
                     {session?.user ? <UserAccountNav user={session.user} />:<SignInButton /> }
