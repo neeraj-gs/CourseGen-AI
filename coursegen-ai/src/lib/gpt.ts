@@ -22,7 +22,7 @@ export async function strict_output(
   output_value_only: boolean = false,
   model: string = "gpt-3.5-turbo",
   temperature: number = 1,
-  num_tries: number = 3,
+  num_tries: number = 3, //by defautl try 3 times
   verbose: boolean = false
 ) {
   // if the user input is in a list, we also process the output as a list of json
