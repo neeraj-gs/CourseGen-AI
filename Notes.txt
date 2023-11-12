@@ -20,3 +20,11 @@ Course Gen AI
         11.Prisama ORM
         12.TypeScript
         
+
+
+Data MOdel:
+    COurse , UNits and Chapters
+
+    Course is the highest level in the hierarchy 
+    Inside the course there are multiple units , title sof sub topics 
+    Inside each unit there are multiple chapeters adn each are a small part and chapters contain youtube video , summary and questions.
