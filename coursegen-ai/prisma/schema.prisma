@@ -51,3 +51,38 @@ model User {
   accounts Account[]
   sessions Session[]
 }
+
+
+//course can contain many units
+model Course {
+  id String @id @default(cuid())
+  name String
+  image String?
+  units Unit[] //this is how we show one to many realtion ship in prisma
+}
+
+//one unit contain many chapters
+model Unit{
+  id String @id @default(cuid())
+  courseId String 
+
+  name String
+  course Course @relation(fields: [courseId], references: [id])
+  chapters Chapter[]
+
+  @@index([courseId], name:"courseId")
+}
+
+model Chapter{
+  id String @id @default(cuid())
+  unitId String 
+  name String
+  youtubeSearchQuery String//this is sent to the open ai api , we ask ai end point to return with a relavent search query so taht we can send search query to youtube api and obtain relavent video
+  videoId String? //this is mapped to the youtube video , if in api it has id we map it else no
+  summary String? @db.VarChar(3000)   //this is the transcript obtained from the youtube api , max 3000 charecters 
+
+  unit Unit @relation(fields: [unitId],references: [id])
+
+  @@index([unitId],name:"unitId")
+}
+
