@@ -9,9 +9,19 @@ export async function POST(req:Request,res:Response){
     //functionality of ai
     try {
         const body = await req.json();
-        const {title,units} = createChapterSchema.parse(body)
+        const {title,units} = createChapterSchema.parse(body) //to get a typesafety data frmo backend
 
-        
+        type outputUnits = {
+            title:string,
+            chapters:{
+                youtubr_search_query: string;
+                chapter_title:string;
+            }[];
+        };
+
+        //to get the output , we use openai api to generate chapters, a json cannot be produced , it might be invalid
+
+
 
     } catch (error) {
         if(error instanceof ZodError){ //it does not confirm to  schema we retunrded
