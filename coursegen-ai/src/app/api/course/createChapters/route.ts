@@ -36,12 +36,13 @@ export async function POST(req:Request,res:Response){
         console.log(output_units)
         return NextResponse.json(output_units)
 
-
-
     } catch (error) {
         if(error instanceof ZodError){ //it does not confirm to  schema we retunrded
             return new NextResponse('invalid Body',{status:400})
-
+        }
+        else {
+            console.error(error); // Log other types of errors for debugging
+            return new NextResponse('Internal Server Error', { status: 500 });
         }
     }
 }
