@@ -70,7 +70,7 @@ model Unit{
   course Course @relation(fields: [courseId], references: [id])
   chapters Chapter[]
 
-  @@index([courseId], name:"courseId")
+  @@index([courseId], name:"courseId") //used to optimize databse queries
 }
 
 model Chapter{
