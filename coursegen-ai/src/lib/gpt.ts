@@ -1,7 +1,4 @@
-// Cre ates a function that 
-
-
-
+// Creates a function that 
 
 import { Configuration, OpenAIApi } from "openai";
 

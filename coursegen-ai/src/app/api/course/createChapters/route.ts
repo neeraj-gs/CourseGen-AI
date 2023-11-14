@@ -15,7 +15,7 @@ export async function POST(req:Request,res:Response){
         type outputUnits = {
             title:string,
             chapters:{
-                youtubr_search_query: string;
+                youtube_search_query: string;
                 chapter_title:string;
             }[];
         };
@@ -40,9 +40,7 @@ export async function POST(req:Request,res:Response){
         if(error instanceof ZodError){ //it does not confirm to  schema we retunrded
             return new NextResponse('invalid Body',{status:400})
         }
-        else {
-            console.error(error); // Log other types of errors for debugging
-            return new NextResponse('Internal Server Error', { status: 500 });
-        }
     }
+
+    return NextResponse.json({Outside: 'Outside try catch block'})
 }
