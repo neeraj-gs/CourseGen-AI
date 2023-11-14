@@ -28,3 +28,14 @@ Data MOdel:
     Course is the highest level in the hierarchy 
     Inside the course there are multiple units , title sof sub topics 
     Inside each unit there are multiple chapeters adn each are a small part and chapters contain youtube video , summary and questions.
+
+
+JSON GPT generation
+    Producing valid json is difficult from open ai models, so found a github repo , that is a library taht wtaps the gpt api such taht we can
+    give api the idela json shapre and api produces teh correct json 
+
+    We ask gpt to output json, if our shape is not produced the ideal shape and format we take teh error and fed it back to gpt and asking to generate in , till a correct json is created
+
+    
+
+
