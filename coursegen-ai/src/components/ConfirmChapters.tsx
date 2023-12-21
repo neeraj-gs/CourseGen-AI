@@ -1,5 +1,6 @@
 import { Chapter, Course, Unit } from '@prisma/client'
 import React from 'react'
+import ChapterCard from './ChapterCard'
 
 type Props = {
     course: Course & {
@@ -22,7 +23,7 @@ const ConfirmChapters = ({course}: Props) => {
                     <div className='mt-3'>
                         {u.chapters.map((c,ci)=>{
                             return(
-                                
+                                <ChapterCard key={c.id} c={c} ci={ci} />
                             )
                         })}
                     </div>
