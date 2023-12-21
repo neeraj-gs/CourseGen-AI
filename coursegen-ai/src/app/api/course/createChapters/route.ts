@@ -1,5 +1,6 @@
 //this is the backend fo teh createcourse , taht is activated when a b title adna  bunch of units are added and passed to the backend
 //once lets go ai then it will hit this endpoint adn it gfenerates some chapters
+// /api/course/createcourse
 
 import { NextResponse } from "next/server";
 import { createChapterSchema } from "@/validators/course";
@@ -11,9 +12,10 @@ export async function POST(req:Request,res:Response){
     try {
         const body = await req.json();
         const {title,units} = createChapterSchema.parse(body) //to get a typesafety data frmo backend
+        //destructure title and units
 
         type outputUnits = {
-            title:string,
+            title:string, //each unit has a title and an array of chapters
             chapters:{
                 youtube_search_query: string;
                 chapter_title:string;
@@ -21,15 +23,19 @@ export async function POST(req:Request,res:Response){
         };
 
         //to get the output , we use openai api to generate chapters, a json cannot be produced , it might be invalid
+        // GPT AI we cannot properly produce valid JSON , there can be a missign harecter and causes entrire json strung to be invalid 
+        // strict_json is a pythin library that wraps the GPT API , such that we can give api our ideal sahpe  of json and API generates correct JSON
+
+        //We ask GPt to output JSON if JSON does not mathc ideal JSO formt , we take the error ,feding back to gpt adn generate till a valid json is generated
 
         let output_units: outputUnits = await strict_output( //we are looking for a array of chapters
             'You are an AI Capable of curating course content, coming up with relavent chapter titles, and finding relavent youtube videos for each chapter',
-            new Array(units.length).fill(
+            new Array(units.length).fill( //user prmpt
                 `It is your responsibility to create a course about ${title}. The user has requested to create chapters for each of the units. Then , for each chapter provide a detailed youtube search query that can be used to find and informative educational video for each chapter. Each query should give an educational informative course in youtube`
             ),
             {
-                title: 'title of the unit',
-                chapters: 'an array of chapters, each chapter should have a youtube_search_query and a chapter title key in the JSON object',
+                title: 'title of the unit', //description of what has to be produced
+                chapters: 'an array of chapters, each chapter should have a youtube_search_query and a name for the chapter generated as chapter_title key in the JSON object',
             }
         );
 
@@ -41,6 +47,4 @@ export async function POST(req:Request,res:Response){
             return new NextResponse('invalid Body',{status:400})
         }
     }
-
-    return NextResponse.json({Outside: 'Outside try catch block'})
 }
