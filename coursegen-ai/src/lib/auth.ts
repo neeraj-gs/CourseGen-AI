@@ -71,6 +71,7 @@ export const authOptions:NextAuthOptions = { //this is where we have auth option
     
 }
 
-export const getAuthSession=()=>{
+export const getAuthSession=()=>{ //utility function that will return with the seeion of the user
     return getServerSession(authOptions); //auth optios , we ge tthe server sessoin, we get the user if loged in if not an emoty section
+    //return user or an empty session if logged in or not
 }
