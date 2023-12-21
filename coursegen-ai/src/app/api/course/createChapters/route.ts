@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { createChapterSchema } from "@/validators/course";
 import { ZodError } from "zod";
 import { strict_output } from "@/lib/gpt";
+import { getUnsplashImage } from "@/lib/unsplash";
 
 export async function POST(req:Request,res:Response){
     //functionality of ai
@@ -39,8 +40,18 @@ export async function POST(req:Request,res:Response){
             }
         );
 
-        console.log(output_units)
-        return NextResponse.json(output_units)
+        const imageSearchTerm = await strict_output(
+            `You are An AI capable of finding the most relavent image for the course based on the exact user prompt`,
+            `Do provide a good and perfect image search term for the title of the course that is ${title}. This search term will be fed into the Unsplash API , so make sure the search term is closely relavent to the ${title}`,
+            { //desired output shapre
+                image_search_term: 'a good and closely relavent search term for the title of the course'
+            }
+        )
+        const course_image = await getUnsplashImage(imageSearchTerm.image_search_term)
+        
+
+
+        return NextResponse.json({output_units,imageSearchTerm,course_image})
 
     } catch (error) {
         if(error instanceof ZodError){ //it does not confirm to  schema we retunrded
