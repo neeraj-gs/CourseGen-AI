@@ -23,6 +23,7 @@ Course Gen AI
         10.MySQL
         11.Prisama ORM
         12.TypeScript
+        13.React Query - It is a way to handle mutations and anything that handles hitting of backend end point [Library for server side state management]
         
 
 
