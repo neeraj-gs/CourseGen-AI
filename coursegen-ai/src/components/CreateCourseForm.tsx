@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form'
 import { z } from 'zod'
 import { createChapterSchema } from '@/validators/course'
@@ -16,15 +16,19 @@ import { useRouter } from 'next/navigation'
 
 type Props = {}
 
+
 type Input = z.infer<typeof createChapterSchema>//this si the shaoe of our form
 //to create a type from zod formSchema  we need to infer a new type
 
 const CreateCourseForm = (props: Props) => {
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false); 
 
-    const {mutate:createChapters} = useMutation({
+    const {mutate: createChapters} = useMutation({
         mutationFn: async({title,units}:Input)=>{
+            setIsLoading(true);
             const res = await axios.post('/api/course/createChapters',{title,units})
+            setIsLoading(false);
             return res.data;
         }
     })
@@ -102,7 +106,7 @@ const CreateCourseForm = (props: Props) => {
                     </div>
                     <Separator className='flex-[1]'/>
                 </div>
-                <Button type='submit' className='w-full mt-6' size='lg'>Generate Your AI Course </Button>
+                <Button  disabled={isLoading} type='submit' className='w-full mt-6' size='lg'>Generate Your AI Course </Button>
             </form>
         </Form>
     </div>

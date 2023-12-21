@@ -1,6 +1,8 @@
 import React from 'react'
 
-const CreateChapters = () => {
+type Props = {};
+
+const CreateChapters = (props:Props) => {
   return (
     <div className='pt-6'>CreateChapters</div>
   )
