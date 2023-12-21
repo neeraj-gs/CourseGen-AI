@@ -1,3 +1,4 @@
+import ConfirmChapters from '@/components/ConfirmChapters';
 import { getAuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { Info } from 'lucide-react';
@@ -37,7 +38,7 @@ const CreateChapters = async({params:{course_id}}:Props) => {
         <h5 className='text-sm uppercase text-secondary-foreground/60'>
           Course Name
         </h5>
-        <h1 className='text-3xl font-bold'>{course.name}</h1>
+        <h1 className='text-3xl font-bold underline'>{course.name}</h1>
 
         <div className='flex p-4 mt-5 border-none bg-secondary'>
           <Info className='w-12 h-12 mr-3 text-blue-400' />
@@ -46,7 +47,10 @@ const CreateChapters = async({params:{course_id}}:Props) => {
           </div>
         </div>
 
+        <ConfirmChapters course={course} />
+
       </div>
+
     </div>
   )
 }
