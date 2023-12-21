@@ -13,20 +13,21 @@ import { Plus, Trash } from 'lucide-react'
 type Props = {}
 
 type Input = z.infer<typeof createChapterSchema>//this si the shaoe of our form
+//to create a type from zod formSchema  we need to infer a new type
 
 const CreateCourseForm = (props: Props) => {
     const form = useForm<Input>({
         resolver: zodResolver(createChapterSchema),
         defaultValues:{
             title:'',
-            units:['','','','','']
+            units:['','','']
         }
     }) //tells react hhok formm tp have shape fo input type
 
     function onSubmit(data:Input){
         console.log(data)
     }
-    // console.log(form.watch());
+    // console.log(form.watch()); //it watcjes for each chagne , similar ot an onCahnge
     form.watch();
 
 
@@ -72,7 +73,7 @@ const CreateCourseForm = (props: Props) => {
                     </div>
                     <Separator className='flex-[1]'/>
                 </div>
-                <Button type='submit' className='w-full mt-6' size='lg'>Lets Generate AI </Button>
+                <Button type='submit' className='w-full mt-6' size='lg'>Generate Your AI Course </Button>
             </form>
         </Form>
     </div>
