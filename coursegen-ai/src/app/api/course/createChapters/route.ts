@@ -7,6 +7,7 @@ import { createChapterSchema } from "@/validators/course";
 import { ZodError } from "zod";
 import { strict_output } from "@/lib/gpt";
 import { getUnsplashImage } from "@/lib/unsplash";
+import { prisma } from "@/lib/db";
 
 export async function POST(req:Request,res:Response){
     //functionality of ai
@@ -21,7 +22,7 @@ export async function POST(req:Request,res:Response){
                 youtube_search_query: string;
                 chapter_title:string;
             }[];
-        };
+        }[];
 
         //to get the output , we use openai api to generate chapters, a json cannot be produced , it might be invalid
         // GPT AI we cannot properly produce valid JSON , there can be a missign harecter and causes entrire json strung to be invalid 
@@ -48,10 +49,35 @@ export async function POST(req:Request,res:Response){
             }
         )
         const course_image = await getUnsplashImage(imageSearchTerm.image_search_term)
-        
+        const course = await prisma.course.create({
+            data:{
+                name:title,
+                image:course_image
+            }
+        }); //craete course 
+
+        //create untsi and chapters
+        for(const unit of output_units){
+            const title = unit.title;
+            const prismaUnit = await prisma.unit.create({
+                data:{
+                    name:title,
+                    courseId:course.id
+                }
+            })
+            await prisma.chapter.createMany({
+                data: unit.chapters.map((c)=>{
+                    return{
+                        name: c.chapter_title,
+                        youtubeSearchQuery: c.youtube_search_query,
+                        unitId: prismaUnit.id
+                    }
+                })
+            })
+        }
 
 
-        return NextResponse.json({output_units,imageSearchTerm,course_image})
+        return NextResponse.json({courseId:course.id}) //we use this to rediredct to tthe page after creting this
 
     } catch (error) {
         if(error instanceof ZodError){ //it does not confirm to  schema we retunrded
