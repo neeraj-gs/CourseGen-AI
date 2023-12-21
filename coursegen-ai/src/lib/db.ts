@@ -3,7 +3,7 @@
 //THis is the preperation for the prisma connection between panet scale and our websote
 
 import { PrismaClient } from "@prisma/client";
-import "server-only";
+import "server-only"; //run only sever
  
 declare global {
   // eslint-disable-next-line no-var, no-unused-vars
@@ -19,5 +19,5 @@ if (process.env.NODE_ENV === "production") {
   if (!global.cachedPrisma) {
     global.cachedPrisma = new PrismaClient();
   }
-  prisma = global.cachedPrisma;
+  prisma = global.cachedPrisma; //save rewsources , inproduction we set it to new Prisma CLient
 }
