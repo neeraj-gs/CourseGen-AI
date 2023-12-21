@@ -77,7 +77,7 @@ export async function POST(req:Request,res:Response){
         }
 
 
-        return NextResponse.json({courseId:course.id}) //we use this to rediredct to tthe page after creting this
+        return NextResponse.json({course_id:course.id}) //we use this to rediredct to tthe page after creting this
 
     } catch (error) {
         if(error instanceof ZodError){ //it does not confirm to  schema we retunrded
