@@ -28,6 +28,8 @@ model Account {
   @@index([userId],name:"userId")
   @@unique([provider, providerAccountId])
 }
+//we use index for planet scale as it doesnot take certain variations
+//account session and user is taken directly from the Next-AUth Websit
 
 model Session { //used to mange session to persist user in our website
   id           String   @id @default(cuid())
@@ -45,7 +47,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image    String?
-  credits   Int @default(5) //this is the credits used to geenrate free courses at max 5 timees and we decrement as they use it 
+  credits   Int @default(3) //this is the credits used to geenrate free courses at max 5 timees and we decrement as they use it 
 
 
   accounts Account[]
