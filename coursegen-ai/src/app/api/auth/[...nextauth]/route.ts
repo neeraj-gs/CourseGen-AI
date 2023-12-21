@@ -3,10 +3,11 @@
 
 //this is taken from next-auth docs 
 //this file any route that comes to /api/route it is handeld by next auth ,inclucing gogl ecallbacks and redirects
+//
 
 
 import { authOptions } from "@/lib/auth";
 import NextAuth from "next-auth/next";
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions) //handler that handles authenticatoin 
 export {handler as GET,handler as POST}

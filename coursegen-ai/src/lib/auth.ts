@@ -1,5 +1,5 @@
 //stores our next-auth cionfigutrations and allows to connect to proejct'
-//risma adapter is used tointeract with our databse and next auth
+//prisma adapter is used tointeract with our databse and next auth
 
 import { DefaultSession, NextAuthOptions, getServerSession } from "next-auth";
 import { prisma } from "./db";
@@ -7,12 +7,13 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import GoogleProvider from 'next-auth/providers/google'
 
 
-declare module 'next-auth'{ //specifiying next-auth the types
+declare module 'next-auth'{ //specifiying next-auth the types of user
+    //next-auth expanding package of next auth
     interface Session extends DefaultSession{
         user:{ // we have overwritten this user with id and credits , we need to also specify other parametere , so join current uesr type
             id:string;
             credits:number;
-        } & DefaultSession['user'];
+        } & DefaultSession['user']; //join with curretn user type
     }
 }
 
@@ -29,7 +30,7 @@ declare module 'next-auth/jwt'{ //this is for the jwt , extend type for token it
 
 export const authOptions:NextAuthOptions = { //this is where we have auth optionsa of type next-auth options
     session:{
-        strategy:'jwt'
+        strategy:'jwt' //json web tokens
     },
     callbacks:{
         //this are a bunch of fucntinos
@@ -39,7 +40,7 @@ export const authOptions:NextAuthOptions = { //this is where we have auth option
                     email:token.email
                 }
             })
-            if(db_user){
+            if(db_user){ //atacj=hing token with  id and credits
                 token.id = db_user.id;
                 token.credits = db_user.credits
             }
