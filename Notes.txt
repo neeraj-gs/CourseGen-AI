@@ -5,14 +5,18 @@ Course Gen AI
     For each chapter it hits a youtube api and then get a transcript and then geneerate questions and concept check , we will feed the transcript to open ai and it will generate questions
     After the generation of course , we can see all the units and the youtibe video based on chatper title and summary 
 
+    THe AI Generates Mulriple Chapters for Each Unit and then creates them 
+    Built Using Prompt Engineering
+
 
     Tech Stack:
         1. Next Auth 
         2. NextJs and ReatJs
         3. Tailwind CSS and ShadCN UI
-        4. Backend - OpenAI API , Youtube API , Unsplash API 
-        5. Stripe Integration FOr apyment service 
-        6. Deploy to a VPS [DIgital Ocean provides VPS]
+        4. Backend - OpenAI API , Youtube API , Unsplash API [get the images]
+        5. Stripe Integration FOr payment service 
+        6. Deploy to a VPS [DIgital Ocean provides VPS] [Comp hosted on CLoud , rent them and run them on it]
+            Cannot Deploy on Vercel , because it limits Function ececutioin time of 5 sec , to execute we need more time to generate courses, we are mlmited by free tier of vercel , so we can self host NextJs Application
         7. Github Actions CI/CD upon Code Push
         8. Dockerizing the Project
         9. Link up Domain Name with SSL Certificate to VPS.
