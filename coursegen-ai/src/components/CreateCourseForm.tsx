@@ -9,6 +9,10 @@ import { Input } from './ui/input'
 import { Separator } from './ui/separator'
 import { Button } from './ui/button'
 import { Plus, Trash } from 'lucide-react'
+import { useMutation } from '@tanstack/react-query'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 type Props = {}
 
@@ -16,6 +20,15 @@ type Input = z.infer<typeof createChapterSchema>//this si the shaoe of our form
 //to create a type from zod formSchema  we need to infer a new type
 
 const CreateCourseForm = (props: Props) => {
+    const router = useRouter();
+
+    const {mutate:createChapters} = useMutation({
+        mutationFn: async({title,units}:Input)=>{
+            const res = await axios.post('/api/course/createChapters',{title,units})
+            return res.data;
+        }
+    })
+
     const form = useForm<Input>({
         resolver: zodResolver(createChapterSchema),
         defaultValues:{
@@ -25,7 +38,23 @@ const CreateCourseForm = (props: Props) => {
     }) //tells react hhok formm tp have shape fo input type
 
     function onSubmit(data:Input){
-        console.log(data)
+        if(data.units.some(u=>u==='')){
+            toast.error("Units Cannot Be Empty , need a Minimum fo 3 Units")
+            return
+        }
+        // console.log(data)
+        createChapters(data,{
+            onSuccess:({course_id})=>{
+                toast.success("Course Createed Successfully")
+                router.push(`/create/${course_id}`)
+                
+
+            },
+            onError:(err)=>{
+                console.log(err)
+                toast.error("Cannot Create Course At this time, Try Again After Some Time")
+            }
+        })
     }
     // console.log(form.watch()); //it watcjes for each chagne , similar ot an onCahnge
     form.watch();

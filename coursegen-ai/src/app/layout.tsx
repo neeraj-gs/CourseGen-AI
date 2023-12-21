@@ -4,6 +4,7 @@ import './globals.css'
 import { cn } from '@/lib/utils'
 import Navbar from '@/components/Navbar'
 import { ThemeProvider } from '@/components/Providers'
+import {Toaster} from 'react-hot-toast'
 
 const lexend = Lexend({ subsets: ['latin'] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         lexend.className,'antialiased min-h-screen pt-20'
       )}>
         <ThemeProvider>
+          <Toaster />
             <Navbar />
             {children}
         </ThemeProvider>
