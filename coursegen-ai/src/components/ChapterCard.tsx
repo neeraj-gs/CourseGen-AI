@@ -5,6 +5,7 @@ import { Chapter } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import React, { useState } from 'react'
+import toast from 'react-hot-toast'
 
 type Props = {
     c:Chapter
@@ -31,7 +32,12 @@ const ChapterCard = React.forwardRef<ChapterCardHandler,Props>(({c,ci},ref) => {
         //as the c.id is triggerd this function is called
         getChapterInfo(undefined,{
           onSuccess:()=>{
-            console.log("Success")
+            setSuccess(true)
+          },
+          onError:(err)=>{
+            console.log(err)
+            setSuccess(false)
+            toast.error("Error Generating Your Chapters Try Again Later")
           }
         })
       }

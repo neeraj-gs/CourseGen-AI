@@ -1,6 +1,6 @@
 "use client"
 import { Chapter, Course, Unit } from '@prisma/client'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import ChapterCard, { ChapterCardHandler } from './ChapterCard'
 import { Separator } from './ui/separator'
 import Link from 'next/link'
@@ -16,6 +16,7 @@ type Props = {
 }
 
 const ConfirmChapters = ({course}: Props) => {
+    const [isLoading,setIsLoading] = useState(false)
     //react ref is a refrence to each compoent , we can have an array for each chapter , on clicking , we call fucntin on each card and call the functoin
 
     const chapterRefs:Record<string , React.RefObject<ChapterCardHandler>> = {};
@@ -23,6 +24,15 @@ const ConfirmChapters = ({course}: Props) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         chapterRefs[c.id] = React.useRef(null)
     })
+
+    const [completed,setCompleted] = React.useState<Set<String>>(new Set())
+
+    const totalChapters = useMemo(()=>{ //goes thorug each unit and add cahtpers to accumulater and return final chapters
+        return course.units.reduce((acc,u)=>{
+            return acc+u.chapters.length
+        },0);
+    },[course.units])
+
   return (
     <div className='w-full mt-4'>
         {course.units.map((u,ui)=>{
@@ -49,7 +59,9 @@ const ConfirmChapters = ({course}: Props) => {
                 </Link>
 
                 <Button
+                    disabled={isLoading}
                     onClick={()=>{
+                        setIsLoading(true)
                         Object.values(chapterRefs).forEach((ref)=>{
                             ref.current?.triggerLoad();
                         }) //gives us indivitual Refs
