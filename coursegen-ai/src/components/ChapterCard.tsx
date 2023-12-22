@@ -22,7 +22,7 @@ const ChapterCard = React.forwardRef<ChapterCardHandler,Props>(({c,ci},ref) => {
     const [isLoading,setIsLoading] = useState(false)
     const {mutate:getChapterInfo} = useMutation({
       mutationFn:async()=>{
-        const res = await axios.post("/api/chapter/getInfo")
+        const res = await axios.post("/api/chapter/getInfo",{chapter_id:c.id})
         return res.data //this request is blocked between random timing between 0 and 4 s
       }
     });
