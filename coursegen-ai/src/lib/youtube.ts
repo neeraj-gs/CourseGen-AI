@@ -22,5 +22,5 @@ export async function searchYouTube(searchQuery: string) {
   //return with the video id based on teh search query geenrated by AI 
 
   export async function getTranscript(videoId:string){
-    
+     
   }
