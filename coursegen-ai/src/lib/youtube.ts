@@ -1,3 +1,5 @@
+import {YoutubeTranscript} from 'youtube-transcript'
+
 export async function searchYouTube(searchQuery: string) {
     searchQuery = searchQuery.replaceAll(" ", "+");
     console.count("youtube search");
@@ -22,5 +24,17 @@ export async function searchYouTube(searchQuery: string) {
   //return with the video id based on teh search query geenrated by AI 
 
   export async function getTranscript(videoId:string){
-     
+     try {
+        let transcript_arr = await YoutubeTranscript.fetchTranscript(videoId,{
+            lang: "en",
+            country:"IN"
+        })
+        let transcript = '';
+        for(let t of transcript_arr){
+            transcript += t.text + ' '
+        }
+        return transcript.replaceAll('\n',' ');
+     } catch (error) {
+        return "";
+     }
   }
