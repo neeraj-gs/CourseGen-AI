@@ -1,6 +1,8 @@
 // /api/chapter/getInfo 
 
 import { prisma } from "@/lib/db";
+import { strict_output } from "@/lib/gpt";
+import { getTranscript, searchYouTube } from "@/lib/youtube";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -21,6 +23,19 @@ export async function POST(req:Request,res:Response){
         if(!chapter){
             return NextResponse.json({success:false,error:"Chapter Not Found"},{status:404})
         }
+        const videoId = await searchYouTube(chapter.youtubeSearchQuery)
+        let transcript = await getTranscript(videoId);
+        let maxl = 200;
+        transcript = transcript.split(' ').slice(0,maxl).join(' ')
+
+        const {summary}:{summary:string} = await strict_output(
+            "You are An AI that is capable of Summarizing a youtube transcript.",
+            "Summarise in 200 words or less and do not talk of the sponsors of the video or anything unrealted to the main topic , also do not introduce what the summary is about.\n"+transcript,
+            {
+                summary: 'Summary of the transcript'
+            }
+        );
+        return NextResponse.json({videoId,transcript,summary})
 
 
         
