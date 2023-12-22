@@ -20,7 +20,7 @@ const ChapterCard = ({c,ci}: Props) => {
 
     }
     )}>
-        <h5>Chapter {ci + 1} :  {c.name}</h5>
+        <h5>{c.name}</h5>
     </div>
   )
 }
