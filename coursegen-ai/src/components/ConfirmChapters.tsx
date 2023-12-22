@@ -1,7 +1,7 @@
 "use client"
 import { Chapter, Course, Unit } from '@prisma/client'
 import React from 'react'
-import ChapterCard from './ChapterCard'
+import ChapterCard, { ChapterCardHandler } from './ChapterCard'
 import { Separator } from './ui/separator'
 import Link from 'next/link'
 import { Button, buttonVariants } from './ui/button'
@@ -16,6 +16,13 @@ type Props = {
 }
 
 const ConfirmChapters = ({course}: Props) => {
+    //react ref is a refrence to each compoent , we can have an array for each chapter , on clicking , we call fucntin on each card and call the functoin
+
+    const chapterRefs:Record<string , React.RefObject<ChapterCardHandler>> = {};
+    course.units.forEach(c => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        chapterRefs[c.id] = React.useRef(null)
+    })
   return (
     <div className='w-full mt-4'>
         {course.units.map((u,ui)=>{
@@ -25,7 +32,7 @@ const ConfirmChapters = ({course}: Props) => {
                     <div className='mt-3'>
                         {u.chapters.map((c,ci)=>{
                             return(
-                                <ChapterCard key={c.id} c={c} ci={ci} />
+                                <ChapterCard ref={chapterRefs[c.id]} key={c.id} c={c} ci={ci} />
                             )
                         })}
                     </div>
@@ -42,7 +49,11 @@ const ConfirmChapters = ({course}: Props) => {
                 </Link>
 
                 <Button
-                    onClick={()=>{}}
+                    onClick={()=>{
+                        Object.values(chapterRefs).forEach((ref)=>{
+                            ref.current?.triggerLoad();
+                        }) //gives us indivitual Refs
+                    }}
                 type='button' className='ml-4 font-semibold hover:bg-green-500'>Generate <ChevronRight className='w-4 h-4 ml-2'/> </Button>
             </div>
             
