@@ -54,6 +54,7 @@ const ChapterCard = React.forwardRef<ChapterCardHandler,Props>(({c,ci,completed,
           addChapterIdToSet();
           return;
         }
+        setIsLoading(true)
         getChapterInfo(undefined,{
           onSuccess:()=>{
             setSuccess(true)
