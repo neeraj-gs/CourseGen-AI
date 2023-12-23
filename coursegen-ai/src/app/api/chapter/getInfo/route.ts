@@ -35,7 +35,20 @@ export async function POST(req:Request,res:Response){
                 summary: 'Summary of the transcript'
             }
         );
-        return NextResponse.json({videoId,transcript,summary})
+
+
+        await prisma.chapter.update({
+            where:{
+                id:chapter_id
+            },
+            data:{
+                videoId:videoId,
+                summary: summary
+            }
+        })
+        
+
+        return NextResponse.json({success:true})
 
 
         
