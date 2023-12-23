@@ -11,11 +11,11 @@ const TypeWriterTitle = (props: Props) => {
         loop: true,
       }}
       onInit={(typewriter)=>{
-        typewriter.typeString("Integrated With AI")
+        typewriter.typeString("Cannot Afford to Buy Courses?")
         .pauseFor(2000).deleteAll()
-        .typeString("Can Autocomplete Your Notes")
+        .typeString("No Worries , Generate your Own Customized Course With Our AI")
         .pauseFor(2000).deleteAll()
-        .typeString("SuperCharged and Increased Productivity")
+        .typeString("Learn Anything You Want With Just a Few Clicks For Free")
         .pauseFor(2000).deleteAll()
         .start()
       }}

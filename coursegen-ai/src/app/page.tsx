@@ -7,15 +7,11 @@ export default function Home() {
   return (
     <>
     <main>
-    <div className='bg-gradient-to-r min-h-screen grainy from-rose-100 to-teal-100'>
-      <div className='flex justify-between'>
-        <h2 className='text-3xl text-green-600 font-extrabold'>NoteX AI</h2>
-      </div>
-      
+    <div className='bg-gradient-to-r min-h-screen grainy from-rose-50 to-teal-50 dark:invert'>
       <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-        <h1 className='font-semibold text-4xl text-center'>
-          Notes App Integrated with your 
-          <span className='text-green-600 font-bold'> Personal AI</span>   Assistant.
+        <h1 className='font-semibold text-4xl text-center dark:invert '>
+          Next Gen Course Genration Platform. <br />
+          <span className='text-green-600 font-semibold'>AI Generated Course </span> 
         </h1>
         <div className="mt-4"></div>
 
