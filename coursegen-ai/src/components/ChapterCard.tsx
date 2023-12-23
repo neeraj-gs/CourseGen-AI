@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { Chapter } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
+import { Loader2 } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 
@@ -31,11 +32,13 @@ const ChapterCard = React.forwardRef<ChapterCardHandler,Props>(({c,ci,completed,
     });
 
     const addChapterIdToSet = useCallback(()=>{
-    const newSet = new Set(completed);
-    newSet.add(c.id);
-    setCompleted(newSet);
+    setCompleted((prev)=>{
+      const newSet = new Set(prev);
+      newSet.add(c.id)
+      return newSet;
+    })
 
-    },[c,completed,setCompleted])
+    },[c.id,setCompleted])
 
     React.useEffect(()=>{
       if(c.videoId){
@@ -75,6 +78,7 @@ const ChapterCard = React.forwardRef<ChapterCardHandler,Props>(({c,ci,completed,
     }
     )}>
         <h5>{c.name}</h5>
+        {isLoading && <Loader2 className='animate-spin' />}
     </div>
   )
 })

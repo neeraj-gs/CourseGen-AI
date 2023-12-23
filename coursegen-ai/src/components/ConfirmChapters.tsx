@@ -57,8 +57,15 @@ const ConfirmChapters = ({course}: Props) => {
                     <ChevronLeft className='w-4 h-4 mr-2' />
                     Back
                 </Link>
-
-                <Button
+                {
+                    totalChapters === completed.size ? (
+                        <Link href={`/course/${course.id}/0/0`} className={buttonVariants({
+                            className: "ml-4 font-semibold"
+                        })}>Safe and Continue
+                            <ChevronRight className='w-4 h-4 ml-2' />
+                        </Link>
+                    ):(
+                        <Button
                     disabled={isLoading}
                     onClick={()=>{
                         setIsLoading(true)
@@ -67,6 +74,10 @@ const ConfirmChapters = ({course}: Props) => {
                         }) //gives us indivitual Refs
                     }}
                 type='button' className='ml-4 font-semibold hover:bg-green-500'>Generate <ChevronRight className='w-4 h-4 ml-2'/> </Button>
+                    )
+                }
+
+                
             </div>
             
 
