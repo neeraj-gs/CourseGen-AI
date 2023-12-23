@@ -10,6 +10,8 @@ import toast from 'react-hot-toast'
 type Props = {
     c:Chapter
     ci:number
+    completed:Set<String>
+    setCompleted:React.Dispatch<React.SetStateAction<Set<String>>>
 }
 
 export type ChapterCardHandler = {
@@ -30,6 +32,9 @@ const ChapterCard = React.forwardRef<ChapterCardHandler,Props>(({c,ci},ref) => {
     React.useImperativeHandle(ref,()=>({
       async triggerLoad(){
         //as the c.id is triggerd this function is called
+        if(c.videoId){
+
+        }
         getChapterInfo(undefined,{
           onSuccess:()=>{
             setSuccess(true)

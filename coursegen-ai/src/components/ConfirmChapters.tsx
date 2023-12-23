@@ -42,7 +42,7 @@ const ConfirmChapters = ({course}: Props) => {
                     <div className='mt-3'>
                         {u.chapters.map((c,ci)=>{
                             return(
-                                <ChapterCard ref={chapterRefs[c.id]} key={c.id} c={c} ci={ci} />
+                                <ChapterCard completed={completed} setCompleted={setCompleted} ref={chapterRefs[c.id]} key={c.id} c={c} ci={ci} />
                             )
                         })}
                     </div>
