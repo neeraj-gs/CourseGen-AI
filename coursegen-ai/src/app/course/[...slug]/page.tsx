@@ -1,4 +1,6 @@
 // ... = maps to  mulitple routes adter the previous routes
+import { prisma } from '@/lib/db'
+import { redirect } from 'next/navigation'
 import React from 'react'
 type Props={
     params:{
@@ -6,9 +8,34 @@ type Props={
     }
 }
 
-const CoursePage = ({params:{slug}}:Props) => {
+const CoursePage = async({params:{slug}}:Props) => {
+  const [course_id,unit_index,chapter_index] = slug;
+
+  const course = await prisma.course.findUnique({
+    where:{
+      id:course_id
+    },
+    include:{
+      units:{
+        include:{chapters:true}
+      }
+    }
+  })
+
+  if(!course){
+    return redirect('/courses')
+  }
+  let ui = parseInt(unit_index);
+  let ci = parseInt(chapter_index);
+
+  const unit = course.units[ui]
+  if(!unit){
+    return redirect('/courses')
+  }
+
+
   return (
-    <div>CoursePage</div>
+    <pre className='mt-10'>{JSON.stringify(slug,null,2)}</pre>
   )
 }
 
