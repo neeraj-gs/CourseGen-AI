@@ -13,6 +13,7 @@ import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import Subscription from './Subscription'
 
 type Props = {}
 
@@ -109,6 +110,11 @@ const CreateCourseForm = (props: Props) => {
                 <Button  disabled={isLoading} type='submit' className='w-full mt-6' size='lg'>Generate Your AI Course </Button>
             </form>
         </Form>
+
+        {/* Subscriptioion  */}
+        <Subscription />
+
+
     </div>
   )
 }
