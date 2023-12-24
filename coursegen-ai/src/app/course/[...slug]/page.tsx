@@ -1,5 +1,6 @@
 // ... = maps to  mulitple routes adter the previous routes
 import CourseSideBar from '@/components/CourseSideBar'
+import VideoSummary from '@/components/VideoSummary'
 import { prisma } from '@/lib/db'
 import { redirect } from 'next/navigation'
 import React from 'react'
@@ -41,7 +42,17 @@ const CoursePage = async({params:{slug}}:Props) => {
 
 
   return (
-    <CourseSideBar course={course} currentChapterId={chapter.id} />
+    <div>
+      <CourseSideBar course={course} currentChapterId={chapter.id} />
+      <div>
+        <div className='ml-[400px] px-8'>
+          <div className='flex'>
+            <VideoSummary chapter={chapter} ci={ci} unit={unit} ui={ui} />
+          </div>
+        </div>
+      </div>
+    </div>
+    
   )
 }
 
