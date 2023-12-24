@@ -79,9 +79,11 @@ const CoursePage = async({params:{slug}}:Props) => {
                       Next
                     </span>
                     <span className='text-xl font-bold'>{nextChapter.name}</span>
-                    <ChevronRight className='w-6 h-6 mr-1' />
+                    
                   </div>
+                  
                 </div>
+                <ChevronRight className='w-6 h-6 mr-1' />
               </Link>
             )}
           </div>
