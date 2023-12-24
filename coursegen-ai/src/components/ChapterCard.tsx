@@ -27,7 +27,7 @@ const ChapterCard = React.forwardRef<ChapterCardHandler,Props>(({c,ci,completed,
     const {mutate:getChapterInfo} = useMutation({
       mutationFn:async()=>{
         const res = await axios.post("/api/chapter/getInfo",{chapter_id:c.id})
-        return res.data //this request is blocked between random timing between 0 and 4 s
+        return res.data
       }
     });
 
@@ -59,12 +59,14 @@ const ChapterCard = React.forwardRef<ChapterCardHandler,Props>(({c,ci,completed,
           onSuccess:()=>{
             setSuccess(true)
             addChapterIdToSet();
+            setIsLoading(false)
           },
           onError:(err)=>{
             console.log(err)
             setSuccess(false)
             toast.error("Error Generating Your Chapters Try Again Later")
             addChapterIdToSet();
+            setIsLoading(false)
           }
         })
       }
@@ -74,7 +76,7 @@ const ChapterCard = React.forwardRef<ChapterCardHandler,Props>(({c,ci,completed,
     {
         "bg-secondary":success === null,
         "bg-red-500":success === false,
-        "bg-green-500":success === true
+        "bg-green-500":success === true,
 
     }
     )}>

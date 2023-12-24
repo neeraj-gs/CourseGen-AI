@@ -20,10 +20,16 @@ const ConfirmChapters = ({course}: Props) => {
     //react ref is a refrence to each compoent , we can have an array for each chapter , on clicking , we call fucntin on each card and call the functoin
 
     const chapterRefs:Record<string , React.RefObject<ChapterCardHandler>> = {};
-    course.units.forEach(c => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        chapterRefs[c.id] = React.useRef(null)
+    course.units.forEach(u => {
+        u.chapters.forEach(c=>{
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            chapterRefs[c.id] = React.useRef(null)
+        })
+        
+        
+        //useref cant be called inside callbacks so we have used to ignore teh line using eslint
     })
+    console.log(chapterRefs)
 
     const [completed,setCompleted] = React.useState<Set<String>>(new Set())
 
@@ -61,7 +67,7 @@ const ConfirmChapters = ({course}: Props) => {
                     totalChapters === completed.size ? (
                         <Link href={`/course/${course.id}/0/0`} className={buttonVariants({
                             className: "ml-4 font-semibold"
-                        })}>Safe and Continue
+                        })}>Save and Continue
                             <ChevronRight className='w-4 h-4 ml-2' />
                         </Link>
                     ):(
