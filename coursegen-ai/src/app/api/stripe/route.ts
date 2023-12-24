@@ -26,10 +26,42 @@ export async function GET(){
             return NextResponse.json({url:stripeSession.url})
         }
 
+        //frst time users subscription
+        const stripeSession = await stripe.checkout.sessions.create({
+            success_url:settingsUrl,
+            cancel_url:settingsUrl,
+            payment_method_types:['card'],
+            mode:'subscription',
+            billing_address_collection:'auto',
+            customer_email:session.user.email ?? '',
+            line_items:[
+                {
+                    price_data:{
+                        currency:'USD',
+                        product_data:{
+                            name:"CourseGenX-AI Pro",
+                            description:"Get Unlimited COurse Generations After Subscription"
+                        },
+                        unit_amount:1000,
+                        recurring:{
+                            interval:'month'
+                        }
+                    },
+                    quantity:1 //alow to buy one subscription at a time
+                }
+            ],
+            metadata:{
+                userId:session.user.id
+            }, //stripe after payment stripe sends a webhhok to our api wih user sid , so we can create sbscriptin and upgrade tehir account
+
+        })
+        return NextResponse.json({url:stripeSession.url})
+
         
 
 
     } catch (error) {
-        
+        console.log(error)
+        return new NextResponse("INternal Server Error",{status:500})
     }
 }
