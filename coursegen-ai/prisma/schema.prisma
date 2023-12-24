@@ -97,4 +97,3 @@ model UserSubscription {
   stripeCurrentPeriodEnd DateTime? @map(name:"stripe_current_period_end")
 }
 
-
