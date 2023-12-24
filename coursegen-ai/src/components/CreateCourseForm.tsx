@@ -15,13 +15,15 @@ import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import Subscription from './Subscription'
 
-type Props = {}
+type Props = {
+    isPro:boolean
+}
 
 
 type Input = z.infer<typeof createChapterSchema>//this si the shaoe of our form
 //to create a type from zod formSchema  we need to infer a new type
 
-const CreateCourseForm = (props: Props) => {
+const CreateCourseForm = ({isPro}: Props) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false); 
 
@@ -112,7 +114,10 @@ const CreateCourseForm = (props: Props) => {
         </Form>
 
         {/* Subscriptioion  */}
-        <Subscription />
+        {!isPro && (
+            <Subscription />
+        )}
+        
 
 
     </div>

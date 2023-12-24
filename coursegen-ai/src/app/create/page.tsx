@@ -1,6 +1,7 @@
 //this is going to be a server componet
 import CreateCourseForm from '@/components/CreateCourseForm';
 import { getAuthSession } from '@/lib/auth';
+import { CheckSubscription } from '@/lib/subscription';
 import { InfoIcon } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
@@ -11,6 +12,7 @@ const CreateCourse = async (props: Props) => {
     if(!session?.user){
         return redirect('/courses')
     }
+    const isPro = await CheckSubscription()
   return (
     <div className='flex flex-col items-start max-w-xl px-8 mx-auto my-36 sm:px-0'>
         <h1 className='self-center text-3xl md:text-3xl font-bold text-center sm:text-2xl'>Create Your Customized Course</h1>
@@ -22,7 +24,7 @@ const CreateCourse = async (props: Props) => {
             </div>
             
         </div>
-        <CreateCourseForm />
+        <CreateCourseForm isPro={isPro} />
 
     </div>
     
