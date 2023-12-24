@@ -1,4 +1,5 @@
 // ... = maps to  mulitple routes adter the previous routes
+import CourseSideBar from '@/components/CourseSideBar'
 import { prisma } from '@/lib/db'
 import { redirect } from 'next/navigation'
 import React from 'react'
@@ -33,9 +34,14 @@ const CoursePage = async({params:{slug}}:Props) => {
     return redirect('/courses')
   }
 
+  const chapter = unit.chapters[ci];
+  if(!chapter){
+    return redirect('/courses')
+  }
+
 
   return (
-    <pre className='mt-10'>{JSON.stringify(slug,null,2)}</pre>
+    <CourseSideBar course={course} currentChapterId={chapter.id} />
   )
 }
 
