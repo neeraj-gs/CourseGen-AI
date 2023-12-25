@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# CourseGenX-AI
 
-First, run the development server:
+Cannot Afford to Buy Courses or have no time in finding best Youtube Videos, Gotch You ,Come generate your Own course Using Our AI with your own customization added and get the best youtube videos and master any topic You want to.
+
+
+### Features
+
+- Authentication Using Next-Auth
+- Create Your Own Course
+- Subscription to Pro User
+- Stripe Integration
+- Light/dark mode toggle
+- Get Best Youtube Videos
+- Transcript and Summary of Each Video
+
+
+### Tech Stack
+
+- Next.js
+- React.js
+- Tailwind CSS
+- Next-Auth
+- TypeScript
+- MySQL
+- Prisma ORM
+- Youtube API ,Open AI API ,Unsplash API 
+- React Query
+
+
+### Screenshots
+
+![CourseGenX-AI](./public/Screenshots/1.png)
+
+![CourseGenX-AI](./public/Screenshots/2.png)
+
+![CourseGenX-AI](./public/Screenshots/3.png)
+
+![CourseGenX-AI](./public/Screenshots/4.png)
+
+
+### Seup Project Locally
+
+Clone the project
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  git clone https://github.com/neeraj-gs/CourseGen-AI.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Go to the project directory
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+  cd coursegen-ai
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Install dependencies
 
-## Learn More
+```bash
+  npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+Create a .env file and add the following secrets
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+  DATABSE_URL
+  NEXT_AUTH_SECRET
+  GOOGLE_CLIENT_ID
+  GOOGLE_CLIENT_SECRET
+  OPEN_AI_API_KEY
+  UNSPLASH_API_KEY
+  YOUTUBE_API_KEY
+  STRIPE_API_KEY
+  NEXT_AUTH_URL
+  STRIPE_WEBHOOK_SECRET
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Start the Server
 
-## Deploy on Vercel
+```bash
+  npm run dev
+```
+Project is Setup successfully.
+### Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Project is currently under build , Checkout Demo of project at:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```bash
+  https://coursegen-x-ai.vercel.app/
+```
+
