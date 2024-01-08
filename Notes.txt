@@ -41,6 +41,8 @@ JSON GPT generation
 
     We ask gpt to output json, if our shape is not produced the ideal shape and format we take teh error and fed it back to gpt and asking to generate in , till a correct json is created
 
-    
+Vercel has 10 sec of of serverless fucniotn , but our API takes more than 10mseconds so we can tuse vercel free tier 
+   Beofre deploying to VPS  we need to setup to the VPS, gives 200$ free credits 
+   Digital Ocean is one that provides  
 
 
