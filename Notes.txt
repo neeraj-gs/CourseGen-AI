@@ -45,4 +45,4 @@ Vercel has 10 sec of of serverless fucniotn , but our API takes more than 10msec
    Beofre deploying to VPS  we need to setup to the VPS, gives 200$ free credits 
    Digital Ocean is one that provides  
 
-
+Next build gives us the server setup
