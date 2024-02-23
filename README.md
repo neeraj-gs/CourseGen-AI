@@ -87,4 +87,5 @@ Project is currently under build , Checkout Demo of project at:
 ```bash
   https://coursegen-x-ai.vercel.app/
 ```
+This is the recorded video that is currently deployed , A fully fledged app will soon be deployed
 
