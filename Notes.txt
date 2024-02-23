@@ -48,3 +48,4 @@ Vercel has 10 sec of of serverless fucniotn , but our API takes more than 10msec
 Next build gives us the server setup
 
 Need to Implemetn CICD using Github Actions or Use a declartive Piepeline using Jenkins, Will be soon doing it.
+Need to add Stripe Integration and Fix API Rate Limiting.
