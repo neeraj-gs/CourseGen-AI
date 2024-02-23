@@ -87,5 +87,5 @@ Project is currently under build , Checkout Demo of project at:
 ```bash
   https://coursegen-x-ai.vercel.app/
 ```
-This is the recorded video that is currently deployed , A fully fledged app will soon be deployed
-
+This is the recorded video that is currently deployed , A fully-fledged app will soon be deployed
+Need To Implement the stripe integration and fix the parallel calling of all api requests at once , and need to fix API limiting factor.
