@@ -46,3 +46,5 @@ Vercel has 10 sec of of serverless fucniotn , but our API takes more than 10msec
    Digital Ocean is one that provides  
 
 Next build gives us the server setup
+
+Need to Implemetn CICD using Github Actions or Use a declartive Piepeline using Jenkins, Will be soon doing it.
