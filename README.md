@@ -14,6 +14,12 @@ Cannot Afford to Buy Courses or have no time in finding best Youtube Videos, Got
 - Get Best Youtube Videos
 - Transcript and Summary of Each Video
 
+### Extra Features Coming Soon
+
+- AI Quiz related to each lesson at the end of each lesson
+- AI Generated Questions and Answers for reference
+- Generate Advanced Lessons for Specific Sub Sections
+
 
 ### Tech Stack
 
