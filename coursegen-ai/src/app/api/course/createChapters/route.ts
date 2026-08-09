@@ -1,108 +1,171 @@
-//this is the backend fo teh createcourse , taht is activated when a b title adna  bunch of units are added and passed to the backend
-//once lets go ai then it will hit this endpoint adn it gfenerates some chapters
-// /api/course/createcourse
+// POST /api/course/createChapters
+//
+// Takes a course title plus a list of units and asks the AI to break each unit
+// into chapters, each with a YouTube search query. Persists the resulting
+// Course > Unit > Chapter tree and returns the new course id.
 
 import { NextResponse } from "next/server";
-import { createChapterSchema } from "@/validators/course";
 import { ZodError } from "zod";
+import { createChapterSchema } from "@/validators/course";
 import { strict_output } from "@/lib/gpt";
 import { getUnsplashImage } from "@/lib/unsplash";
 import { prisma } from "@/lib/db";
 import { getAuthSession } from "@/lib/auth";
 import { CheckSubscription } from "@/lib/subscription";
 
-export async function POST(req:Request,res:Response){
-    //functionality of ai
-    try {
-        const session = await getAuthSession();
-        if(!session?.user){
-            return new NextResponse("Unauthorized",{status:401})
-        }
-        const isPro = await CheckSubscription();
-        if(session.user.credits <=0 && !isPro){
-            return new NextResponse("No Credits Left",{status:401})
-        }
-        const body = await req.json();
-        const {title,units} = createChapterSchema.parse(body) //to get a typesafety data frmo backend
-        //destructure title and units
+// This route calls OpenAI several times; the default 10s Vercel limit is not
+// enough. 60s is the maximum on Hobby, 300s is available on Pro.
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
 
-        type outputUnits = {
-            title:string, //each unit has a title and an array of chapters
-            chapters:{
-                youtube_search_query: string;
-                chapter_title:string;
-            }[];
-        }[];
+type OutputUnits = {
+  title: string;
+  chapters: {
+    youtube_search_query: string;
+    chapter_title: string;
+  }[];
+}[];
 
-        //to get the output , we use openai api to generate chapters, a json cannot be produced , it might be invalid
-        // GPT AI we cannot properly produce valid JSON , there can be a missign harecter and causes entrire json strung to be invalid 
-        // strict_json is a pythin library that wraps the GPT API , such that we can give api our ideal sahpe  of json and API generates correct JSON
-
-        //We ask GPt to output JSON if JSON does not mathc ideal JSO formt , we take the error ,feding back to gpt adn generate till a valid json is generated
-
-        let output_units: outputUnits = await strict_output( //we are looking for a array of chapters
-            'You are an AI Capable of curating course content, coming up with relavent chapter titles, and finding relavent youtube videos for each chapter',
-            new Array(units.length).fill( //user prmpt
-                `It is your responsibility to create a course about ${title}. The user has requested to create chapters for each of the units. Then , for each chapter provide a detailed youtube search query that can be used to find and informative educational video for each chapter. Each query should give an educational informative course in youtube`
-            ),
-            {
-                title: 'title of the unit', //description of what has to be produced
-                chapters: 'an array of chapters, each chapter should have a youtube_search_query and a name for the chapter generated as chapter_title key in the JSON object',
-            }
-        );
-
-        const imageSearchTerm = await strict_output(
-            `You are An AI capable of finding the most relavent image for the course based on the exact user prompt`,
-            `Do provide a good and perfect image search term for the title of the course that is ${title}. This search term will be fed into the Unsplash API , so make sure the search term is closely relavent to the ${title}`,
-            { //desired output shapre
-                image_search_term: 'a good and closely relavent search term for the title of the course'
-            }
-        )
-        const course_image = await getUnsplashImage(imageSearchTerm.image_search_term)
-        const course = await prisma.course.create({
-            data:{
-                name:title,
-                image:course_image
-            }
-        }); //craete course 
-
-        //create untsi and chapters
-        for(const unit of output_units){
-            const title = unit.title;
-            const prismaUnit = await prisma.unit.create({
-                data:{
-                    name:title,
-                    courseId:course.id
-                }
-            })
-            await prisma.chapter.createMany({
-                data: unit.chapters.map((c)=>{
-                    return{
-                        name: c.chapter_title,
-                        youtubeSearchQuery: c.youtube_search_query,
-                        unitId: prismaUnit.id
-                    }
-                })
-            })
-        }
-
-        await prisma.user.update({
-            where:{
-                id:session.user.id
-            },
-            data:{
-                credits:{
-                    decrement:1,
-                }
-            }
-        })
-
-
-        return NextResponse.json({course_id:course.id}) //we use this to rediredct to tthe page after creting this
-
-    } catch (error) {
-        if(error instanceof ZodError){ //it does not confirm to  schema we retunrded
-            return new NextResponse('invalid Body',{status:400})
-        }
+export async function POST(req: Request) {
+  try {
+    const session = await getAuthSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const isPro = await CheckSubscription();
+    if (session.user.credits <= 0 && !isPro) {
+      return NextResponse.json(
+        { error: "You have no credits left. Upgrade to Pro for unlimited courses." },
+        { status: 402 }
+      );
+    }
+
+    const body = await req.json();
+    const { title, units } = createChapterSchema.parse(body);
+
+    // Both calls are independent, so run them together rather than back to back.
+    const [output_units, imageSearchTerm] = await Promise.all([
+      strict_output(
+        `You are an AI capable of curating course content, coming up with relevant chapter titles, and finding relevant youtube videos for each chapter. ` +
+          `You must return exactly ${units.length} units, one for each input element, in the same order.`,
+        // One prompt per unit the user actually typed. The previous version sent
+        // the same generic prompt N times, so the units the user entered were
+        // never passed to the model at all.
+        units.map(
+          (unit) =>
+            `It is your responsibility to create a course about ${title}. The user has requested to create chapters for the unit "${unit}". Use "${unit}" as the unit title. For each chapter provide a detailed youtube search query that can be used to find an informative educational video. Each query should surface an educational, informative video on YouTube.`
+        ),
+        {
+          title: "title of the unit",
+          chapters:
+            "an array of chapters, each chapter should have a youtube_search_query and a name for the chapter generated as chapter_title key in the JSON object",
+        }
+      ) as Promise<OutputUnits>,
+      strict_output(
+        "You are an AI capable of finding the most relevant image for a course based on the user's prompt.",
+        `Provide a good image search term for a course titled "${title}". This term will be fed into the Unsplash API, so keep it short and closely relevant.`,
+        {
+          image_search_term:
+            "a good and closely relevant search term for the title of the course",
+        }
+      ),
+    ]);
+
+    const validUnits = normaliseUnits(output_units);
+    if (validUnits.length === 0) {
+      return NextResponse.json(
+        { error: "The AI could not generate chapters for this topic. Try a different title." },
+        { status: 502 }
+      );
+    }
+
+    const course_image = await getUnsplashImage(
+      imageSearchTerm?.image_search_term ?? title
+    );
+
+    // One transaction so a partially-written course can never be left behind.
+    const course = await prisma.$transaction(async (tx) => {
+      const created = await tx.course.create({
+        data: {
+          name: title,
+          image: course_image,
+          userId: session.user.id,
+        },
+      });
+
+      for (const unit of validUnits) {
+        const prismaUnit = await tx.unit.create({
+          data: {
+            name: unit.title,
+            courseId: created.id,
+          },
+        });
+
+        await tx.chapter.createMany({
+          data: unit.chapters.map((c) => ({
+            name: c.chapter_title,
+            youtubeSearchQuery: c.youtube_search_query,
+            unitId: prismaUnit.id,
+          })),
+        });
+      }
+
+      // Pro users generate for free, so only free users pay a credit.
+      if (!isPro) {
+        await tx.user.update({
+          where: { id: session.user.id },
+          data: { credits: { decrement: 1 } },
+        });
+      }
+
+      return created;
+    });
+
+    return NextResponse.json({ course_id: course.id });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        { error: error.issues[0]?.message ?? "Invalid request body" },
+        { status: 400 }
+      );
+    }
+
+    // Previously this branch returned nothing, which made Next.js throw
+    // "No response is returned from route handler" and surfaced as an opaque
+    // 500 with no message on the client.
+    console.error("createChapters failed:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong generating your course.",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+/** Drops anything the model returned that isn't a usable unit + chapter list. */
+function normaliseUnits(raw: unknown): OutputUnits {
+  if (!Array.isArray(raw)) return [];
+
+  return raw
+    .filter(
+      (unit): unit is OutputUnits[number] =>
+        Boolean(unit) &&
+        typeof unit.title === "string" &&
+        Array.isArray(unit.chapters)
+    )
+    .map((unit) => ({
+      title: unit.title,
+      chapters: unit.chapters.filter(
+        (c) =>
+          Boolean(c) &&
+          typeof c.chapter_title === "string" &&
+          typeof c.youtube_search_query === "string"
+      ),
+    }))
+    .filter((unit) => unit.chapters.length > 0);
 }
