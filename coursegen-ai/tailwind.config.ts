@@ -16,7 +16,22 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        // Lexend for everything readable — it is a legibility-tuned face, which
+        // is the right instinct for a product about learning.
+        sans: ["var(--font-lexend)", "ui-sans-serif", "system-ui", "sans-serif"],
+        // Reserved for indices: unit/chapter numbers, durations, counts.
+        mono: ["var(--font-plex-mono)", "ui-monospace", "monospace"],
+      },
       colors: {
+        // Landing-page palette. Named so intent survives refactors.
+        ink: "#0B1220",
+        paper: "#F7F8F7",
+        grass: "#16A34A",
+        moss: "#14532D",
+        rule: "#E2E6E3",
+        mute: "#5B6660",
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
