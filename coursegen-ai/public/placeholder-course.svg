@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="180" viewBox="0 0 400 180" role="img" aria-label="Course cover placeholder">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="180" fill="url(#g)"/>
+  <g fill="#ffffff" opacity="0.9" transform="translate(170 60)">
+    <path d="M30 0 60 16 30 32 0 16z"/>
+    <path d="M10 24v14c0 6 9 10 20 10s20-4 20-10V24L30 36z"/>
+  </g>
+</svg>
