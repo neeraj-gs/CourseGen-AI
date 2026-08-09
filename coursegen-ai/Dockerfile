@@ -1,68 +1,64 @@
-FROM node:18-alpine AS base 
-#Create a new Nodejs COmputer with version 18
+# Multi-stage build producing a minimal Next.js standalone server image.
+# Build with:  docker build -t coursegen-ai .
+FROM node:20-alpine AS base
 
-# Install dependencies only when needed
+# ---------------------------------------------------------------------------
+# Dependencies
+# ---------------------------------------------------------------------------
 FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+# See https://github.com/nodejs/docker-node#nodealpine for why libc6-compat is needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+COPY package.json package-lock.json* ./
+# --ignore-scripts skips the `postinstall` prisma generate, which would fail here
+# because the schema has not been copied yet. The builder stage runs it instead.
+RUN npm ci --ignore-scripts
 
-
-# Rebuild the source code only when needed
+# ---------------------------------------------------------------------------
+# Build
+# ---------------------------------------------------------------------------
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# Emits .next/standalone, which the runner stage below copies out.
+ENV DOCKER_BUILD=1
+ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN yarn build
+# Prisma needs a syntactically valid URL to generate the client. It is never
+# connected to at build time; the real value is injected at run time.
+ENV DATABASE_URL="postgresql://user:password@localhost:5432/placeholder"
 
-# If using npm comment out above and use below instead
-# RUN npm run build
+RUN npx prisma generate
+RUN npm run build
 
-# Production image, copy all the files and run next
+# ---------------------------------------------------------------------------
+# Runtime
+# ---------------------------------------------------------------------------
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+RUN mkdir .next && chown nextjs:nodejs .next
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
+# Output file tracing keeps the image small by copying only what is reachable.
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
 EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-ENV PORT 3000
-# set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
-
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
+# server.js is emitted by `next build` with output: 'standalone'.
 CMD ["node", "server.js"]
