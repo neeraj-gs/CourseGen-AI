@@ -1,127 +1,170 @@
-'use client'
-import React, { useState } from 'react'
-import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form'
-import { z } from 'zod'
-import { createChapterSchema } from '@/validators/course'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Input } from './ui/input'
-import { Separator } from './ui/separator'
-import { Button } from './ui/button'
-import { Plus, Trash } from 'lucide-react'
-import { useMutation } from '@tanstack/react-query'
-import axios from 'axios'
-import toast from 'react-hot-toast'
-import { useRouter } from 'next/navigation'
-import Subscription from './Subscription'
+"use client";
+
+import React from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { Loader2, Plus, Trash } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
+import { Input } from "./ui/input";
+import { Separator } from "./ui/separator";
+import { Button } from "./ui/button";
+import Subscription from "./Subscription";
+import { createChapterSchema, type CreateChapterInput } from "@/validators/course";
+import { MAX_UNITS, MIN_UNITS } from "@/lib/constants";
 
 type Props = {
-    isPro:boolean
-}
+  isPro: boolean;
+  stripeEnabled: boolean;
+};
 
+const CreateCourseForm = ({ isPro, stripeEnabled }: Props) => {
+  const router = useRouter();
 
-type Input = z.infer<typeof createChapterSchema>//this si the shaoe of our form
-//to create a type from zod formSchema  we need to infer a new type
+  const { mutate: createChapters, isPending } = useMutation({
+    mutationFn: async ({ title, units }: CreateChapterInput) => {
+      const res = await axios.post("/api/course/createChapters", {
+        title,
+        units,
+      });
+      return res.data as { course_id: string };
+    },
+  });
 
-const CreateCourseForm = ({isPro}: Props) => {
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false); 
+  const form = useForm<CreateChapterInput>({
+    resolver: zodResolver(createChapterSchema),
+    defaultValues: {
+      title: "",
+      units: ["", "", ""],
+    },
+  });
 
-    const {mutate: createChapters} = useMutation({
-        mutationFn: async({title,units}:Input)=>{
-            setIsLoading(true);
-            const res = await axios.post('/api/course/createChapters',{title,units})
-            setIsLoading(false);
-            return res.data;
-        }
-    })
+  const units = form.watch("units");
 
-    const form = useForm<Input>({
-        resolver: zodResolver(createChapterSchema),
-        defaultValues:{
-            title:'',
-            units:['','','']
-        }
-    }) //tells react hhok formm tp have shape fo input type
-
-    function onSubmit(data:Input){
-        if(data.units.some(u=>u==='')){
-            toast.error("Units Cannot Be Empty , need a Minimum fo 3 Units")
-            return
-        }
-        // console.log(data)
-        createChapters(data,{
-            onSuccess:({course_id})=>{
-                toast.success("Course Createed Successfully")
-                router.push(`/create/${course_id}`)
-                
-
-            },
-            onError:(err)=>{
-                console.log(err)
-                toast.error("Cannot Create Course At this time, Try Again After Some Time")
-            }
-        })
-    }
-    // console.log(form.watch()); //it watcjes for each chagne , similar ot an onCahnge
-    form.watch();
-
+  function onSubmit(data: CreateChapterInput) {
+    createChapters(data, {
+      onSuccess: ({ course_id }) => {
+        toast.success("Course created successfully");
+        router.push(`/create/${course_id}`);
+      },
+      onError: (err) => {
+        // Surface the server's actual reason ("no credits left", "AI failed",
+        // …) instead of one generic message for every failure.
+        const message =
+          axios.isAxiosError(err) && err.response?.data?.error
+            ? (err.response.data.error as string)
+            : "Cannot create the course right now. Please try again later.";
+        toast.error(message);
+      },
+    });
+  }
 
   return (
-    <div className='w-full'>
-        <Form {...form}>
-            <form className='w-full mt-4' onSubmit={form.handleSubmit(onSubmit)}>
-                <FormField control={form.control} name='title' render={({field})=>{
-                    return(
-                        <FormItem className='flex flex-col items-start w-full sm:items-center sm:flex-row'>
-                        <FormLabel className='flex-[1] text-xl'>Title</FormLabel>
-                        <FormControl className='flex-[6]'>
-                            <Input placeholder='Enter the Title of the Course' {...field}/>
-                        </FormControl>
-                    </FormItem>
-                    )
-                }}/>
-
-                {form.watch('units').map((_,i)=>{//actually take sthe first argument and the index
-                    return(
-                        <FormField  key={i} control={form.control} name={`units.${i}`} render={({field})=>{
-                            return(
-                                <FormItem className='flex flex-col items-start w-full sm:items-center sm:flex-row'>
-                                <FormLabel className='flex-[1] text-xl'>Unit {i+1}</FormLabel>
-                                <FormControl className='flex-[6]'>
-                                    <Input placeholder='Enter the Unit' {...field}/>
-                                </FormControl>
-                                </FormItem>
-                            )
-                        }}/>
-                    )
-                })}
-
-                <div className='flex items-center justify-center mt-4'>
-                    <Separator className='flex-[1]'/>
-                    <div className='mx-4'>
-                        <Button type='button' onClick={()=>{
-                            form.setValue('units',[...form.watch('units'),""]);
-                        }} variant='secondary' className='font-semibold ml-4'>Add Unit <Plus className='w-4 h-4 ml-2 text-green-500'/> </Button>
-                        <Button type='button' onClick={()=>{
-                            form.setValue('units',form.watch('units').slice(0,-1))
-                        }} variant='secondary' className='font-semibold ml-6'>Remove Unit <Trash className='w-4 h-4 ml-2 text-red-500'/> </Button>
-                    </div>
-                    <Separator className='flex-[1]'/>
+    <div className="w-full">
+      <Form {...form}>
+        <form className="w-full mt-4" onSubmit={form.handleSubmit(onSubmit)}>
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem className="flex flex-col items-start w-full sm:items-center sm:flex-row">
+                <FormLabel className="flex-[1] text-xl">Title</FormLabel>
+                <div className="flex-[6] w-full">
+                  <FormControl>
+                    <Input
+                      placeholder="Enter the title of the course"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
                 </div>
-                <Button  disabled={isLoading} type='submit' className='w-full mt-6' size='lg'>Generate Your AI Course </Button>
-            </form>
-        </Form>
+              </FormItem>
+            )}
+          />
 
-        {/* Subscriptioion  */}
-        {!isPro && (
-            <Subscription />
-        )}
-        
+          {units.map((_, i) => (
+            <FormField
+              key={i}
+              control={form.control}
+              name={`units.${i}`}
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start w-full sm:items-center sm:flex-row">
+                  <FormLabel className="flex-[1] text-xl">
+                    Unit {i + 1}
+                  </FormLabel>
+                  <div className="flex-[6] w-full">
+                    <FormControl>
+                      <Input placeholder="Enter the unit" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+          ))}
 
+          <div className="flex items-center justify-center mt-4">
+            <Separator className="flex-[1]" />
+            <div className="flex gap-3 mx-4">
+              <Button
+                type="button"
+                variant="secondary"
+                className="font-semibold"
+                disabled={units.length >= MAX_UNITS}
+                onClick={() => form.setValue("units", [...units, ""])}
+              >
+                Add Unit <Plus className="w-4 h-4 ml-2 text-green-500" />
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="font-semibold"
+                disabled={units.length <= MIN_UNITS}
+                onClick={() => form.setValue("units", units.slice(0, -1))}
+              >
+                Remove Unit <Trash className="w-4 h-4 ml-2 text-red-500" />
+              </Button>
+            </div>
+            <Separator className="flex-[1]" />
+          </div>
 
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full mt-6"
+            size="lg"
+          >
+            {isPending ? (
+              <>
+                Generating your course
+                <Loader2 className="w-5 h-5 ml-2 animate-spin" />
+              </>
+            ) : (
+              "Generate Your AI Course"
+            )}
+          </Button>
+
+          {isPending && (
+            <p className="mt-3 text-sm text-center text-secondary-foreground/60">
+              The AI is writing your syllabus. This usually takes 20–40 seconds.
+            </p>
+          )}
+        </form>
+      </Form>
+
+      {!isPro && stripeEnabled && <Subscription />}
     </div>
-  )
-}
+  );
+};
 
-export default CreateCourseForm
+export default CreateCourseForm;
