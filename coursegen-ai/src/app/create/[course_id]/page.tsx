@@ -1,6 +1,8 @@
 import ConfirmChapters from '@/components/ConfirmChapters';
 import { getAuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { isAppConfigured } from '@/lib/demo-mode';
+import DemoModeNotice from '@/components/DemoModeNotice';
 import { Info } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react'
@@ -11,10 +13,17 @@ type Props = {
   }
 };
 
+export const dynamic = "force-dynamic";
+
 const CreateChapters = async({params:{course_id}}:Props) => {
+  if (!isAppConfigured()) {
+    return <DemoModeNotice feature="Course generation" />;
+  }
+
   const session = await getAuthSession();
   if(!session?.user){
-    return redirect('/course')
+    // Was '/course', which is not a route — signed-out users hit a 404.
+    return redirect('/courses')
   }
 
   const course = await prisma.course.findUnique({
