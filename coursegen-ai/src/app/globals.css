@@ -91,3 +91,164 @@
     transition-duration: 0.01ms !important;
   }
 }
+/* ==========================================================================
+   THE CUTTING ROOM — the landing page's material layer.
+
+   Everything below describes a physical editing bench: a backlit table, film
+   held against it, sprocket perforations down both gutters, and the grain of
+   the emulsion itself. Scoped to `.cutting-room` so the app screens behind
+   /courses, /create and /settings are untouched by any of it.
+   ========================================================================== */
+
+.cutting-room {
+  /* The table surface. In dark mode the room goes out and the table is the
+     only thing still lit — the same object, a different time of night. */
+  --room-ground: #f0efe9;
+  --room-ink: #1c1a17;
+  --room-splice: #d9d6cb;
+  --room-dust: #8a8880;
+  /* Backlight bleeding up through the film. */
+  --room-glow: rgba(255, 252, 240, 0.9);
+
+  background-color: var(--room-ground);
+  color: var(--room-ink);
+  font-family: theme("fontFamily.body");
+}
+
+.dark .cutting-room {
+  --room-ground: #12100e;
+  --room-ink: #eae7dd;
+  --room-splice: #2e2a25;
+  --room-dust: #6f6b63;
+  --room-glow: rgba(255, 244, 214, 0.14);
+}
+
+/* --------------------------------------------------------------------------
+   The sprocket gutter. Two perforated columns run the full height of the
+   page; every section is a frame between them. Drawn as a repeating tile so
+   the holes stay crisp at any zoom and cost nothing to scroll.
+   -------------------------------------------------------------------------- */
+.perf {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='40'%3E%3Crect x='5' y='11' width='12' height='18' rx='3.5' fill='%23d9d6cb'/%3E%3C/svg%3E");
+  background-repeat: repeat-y;
+  background-position: center top;
+}
+
+.dark .perf {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='40'%3E%3Crect x='5' y='11' width='12' height='18' rx='3.5' fill='%232e2a25'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   Emulsion grain. Flat colour reads as paint; the same colour under grain
+   reads as material. Kept under 5% so it never becomes a texture in itself.
+   -------------------------------------------------------------------------- */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dark .grain::after {
+  opacity: 0.08;
+}
+
+/* --------------------------------------------------------------------------
+   The lamp. Motion 3 of 4: interactive things are lit from beneath rather
+   than recoloured. The glow is a pseudo-element so it can sit behind the
+   label without the label ever changing weight or hue on hover.
+   -------------------------------------------------------------------------- */
+.lamp-surface {
+  position: relative;
+  isolation: isolate;
+}
+
+.lamp-surface::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+  background: radial-gradient(
+    120% 160% at 50% 120%,
+    var(--lamp-colour, rgba(194, 65, 12, 0.24)) 0%,
+    transparent 72%
+  );
+}
+
+.lamp-surface:hover::before,
+.lamp-surface:focus-visible::before {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Focus. One ring everywhere on this page, in the candidate colour, offset so
+   it never touches the element it is marking.
+   -------------------------------------------------------------------------- */
+.cutting-room :focus-visible {
+  outline: 2px solid #c2410c;
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+.dark .cutting-room :focus-visible {
+  outline-color: #f97316;
+}
+
+/* --------------------------------------------------------------------------
+   The rank threshold control. A real <input type="range"> so it is keyboard
+   operable and screen-reader announced; styled as the bench's own slider.
+   -------------------------------------------------------------------------- */
+.rank-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 26px;
+  background: transparent;
+  cursor: ew-resize;
+}
+
+.rank-slider::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--room-splice);
+}
+
+.rank-slider::-moz-range-track {
+  height: 2px;
+  background: var(--room-splice);
+}
+
+.rank-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 22px;
+  margin-top: -10px;
+  border-radius: 2px;
+  background: #c2410c;
+  border: none;
+}
+
+.rank-slider::-moz-range-thumb {
+  width: 12px;
+  height: 22px;
+  border-radius: 2px;
+  background: #c2410c;
+  border: none;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion: the entrance still happens, it just happens instantly. The
+   3D canvas handles itself by rendering exactly one composed frame.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .cutting-room [data-register] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

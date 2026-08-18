@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Lexend, IBM_Plex_Mono } from "next/font/google";
+import {
+  Lexend,
+  IBM_Plex_Mono,
+  Bricolage_Grotesque,
+  Newsreader,
+  Martian_Mono,
+} from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -18,6 +24,40 @@ const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-plex-mono",
+});
+
+// --- The Cutting Room. Three faces, three jobs, no overlap. ---
+
+// Display. A variable grotesk whose widths are deliberately uneven, so a
+// headline in it could not have come out of a default stack.
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["600", "800"],
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
+// Body. Cut for screens; carries a long paragraph without the glare a grotesk
+// picks up at reading size.
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  style: ["normal", "italic"],
+  variable: "--font-newsreader",
+  display: "swap",
+  // Next has no cap-height metrics for Newsreader, so it cannot synthesise a
+  // matched fallback. Naming the fallback stack and turning the adjustment
+  // off is honest about that rather than letting the build warn every time.
+  adjustFontFallback: false,
+  fallback: ["Georgia", "Times New Roman", "serif"],
+});
+
+// Data. Edge codes, ranks, scores, timecodes — anything countable.
+const martian = Martian_Mono({
+  subsets: ["latin"],
+  weight: ["300", "500"],
+  variable: "--font-martian",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -46,6 +86,9 @@ export default function RootLayout({
         className={cn(
           lexend.variable,
           plexMono.variable,
+          bricolage.variable,
+          newsreader.variable,
+          martian.variable,
           "font-sans antialiased min-h-screen pt-20"
         )}
       >

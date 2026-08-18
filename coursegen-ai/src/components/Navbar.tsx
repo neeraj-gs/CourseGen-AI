@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Session } from "next-auth";
 import SignInButton from "./SignInButton";
 import UserAccountNav from "./UserAccountNav";
+import NavChrome from "./NavChrome";
 import { ThemeToggle } from "./ThemeToggle";
 import { getAuthSession } from "@/lib/auth";
 import { isAppConfigured } from "@/lib/demo-mode";
@@ -22,43 +23,51 @@ async function safeSession(): Promise<Session | null> {
   }
 }
 
+const LINK =
+  "text-sm underline decoration-1 underline-offset-4 opacity-75 transition-opacity hover:opacity-100";
+
 const Navbar = async () => {
   const appLive = isAppConfigured();
   const session = await safeSession();
 
   return (
-    <nav className="fixed inset-x-0 top-0 bg-paper dark:bg-ink z-[10] h-fit border-b border-rule dark:border-white/10 py-4">
-      <div className="flex items-center justify-between h-full gap-4 px-6 mx-auto max-w-7xl">
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <p className="rounded-xl border-2 border-black px-2 py-1 text-sm sm:text-lg font-bold transition-all hover:translate-y-[2px] dark:border-white">
-            CourseGenX-AI
-          </p>
+    // NavChrome picks the frame from the route; the links below are identical
+    // everywhere, so nothing about the app's navigation depends on the theme
+    // the landing page happens to be wearing.
+    <NavChrome>
+      <Link href="/" className="flex shrink-0 items-center gap-2">
+        <span className="border border-graphite px-2.5 py-1.5 font-data text-[11px] font-medium uppercase tracking-[0.16em] transition-transform hover:translate-y-px dark:border-white">
+          CourseGenX-AI
+        </span>
+      </Link>
+
+      <div className="flex items-center gap-4 sm:gap-5">
+        <Link href="/courses" className={LINK}>
+          Courses
         </Link>
 
-        <div className="flex items-center gap-4 sm:gap-5">
-          <Link href="/courses" className="text-sm underline underline-offset-4">
-            Courses
-          </Link>
+        {session?.user && (
+          <>
+            <Link href="/create" className={LINK}>
+              Create Course
+            </Link>
+            <Link href="/settings" className={LINK}>
+              Settings
+            </Link>
+          </>
+        )}
 
-          {session?.user && (
-            <>
-              <Link href="/create" className="text-sm underline underline-offset-4">
-                Create Course
-              </Link>
-              <Link href="/settings" className="text-sm underline underline-offset-4">
-                Settings
-              </Link>
-            </>
-          )}
+        <ThemeToggle />
 
-          <ThemeToggle />
-
-          {/* Sign-in is pointless without OAuth credentials, so hide it. */}
-          {appLive &&
-            (session?.user ? <UserAccountNav user={session.user} /> : <SignInButton />)}
-        </div>
+        {/* Sign-in is pointless without OAuth credentials, so hide it. */}
+        {appLive &&
+          (session?.user ? (
+            <UserAccountNav user={session.user} />
+          ) : (
+            <SignInButton />
+          ))}
       </div>
-    </nav>
+    </NavChrome>
   );
 };
 
