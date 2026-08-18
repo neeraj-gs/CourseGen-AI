@@ -43,7 +43,7 @@ const Subscription = () => {
       <Button
         disabled={loading}
         onClick={handleSubscribe}
-        className="mt-4 font-bold text-white transition bg-gradient-to-tr from-green-500 to-blue-500 hover:from-green-500 hover:to-blue-600"
+        className="mt-4 bg-grass font-bold text-white transition-colors hover:bg-moss"
       >
         Upgrade to Pro
         <Zap className="ml-2 fill-white" />
