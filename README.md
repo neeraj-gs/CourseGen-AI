@@ -77,11 +77,16 @@ Open http://localhost:3000. Check http://localhost:3000/api/health to confirm th
 2. **New Project** in Vercel → import the repo.
 3. Deploy. That's it — no environment variables required.
 
-Leave **Root Directory** at the repo root. The Next.js app lives there, so Vercel
-detects the framework on its own. (It used to sit in a `coursegen-ai/`
-subdirectory, which meant an easily-missed Root Directory setting; get that wrong
-and the build finishes in under a second, deploys an empty output, and every
-route returns `404: NOT_FOUND`.)
+Leave **Root Directory** at the repo root — the Next.js app lives there.
+
+`vercel.json` pins `"framework": "nextjs"` on purpose. A project imported while
+the app still sat in a `coursegen-ai/` subdirectory gets its framework preset
+saved as `null`, and that value is **not** re-detected when the app later moves.
+A null preset builds the project as "Other": it runs `npm run build`, ignores
+`.next/`, and publishes `public/` as a static folder — so `/Course.mp4` serves
+fine while `/` and every route return `404: NOT_FOUND`, with a completely
+green build log. Pinning it in `vercel.json` overrides the stored setting and
+makes the repo self-describing.
 
 The landing page is statically prerendered, and the demo video only downloads when a visitor presses play.
 
