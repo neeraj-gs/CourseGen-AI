@@ -23,7 +23,7 @@ Next.js 14 (App Router) · React · TypeScript · Tailwind CSS + shadcn/ui · Ne
 
 ## Environment Variables
 
-Copy `coursegen-ai/.env.example` to `coursegen-ai/.env` and fill it in.
+Copy `.env.example` to `.env` and fill it in.
 
 **None of these are needed to deploy the landing page and demo video.** They are only required to run the interactive course generator.
 
@@ -58,7 +58,7 @@ Copy `coursegen-ai/.env.example` to `coursegen-ai/.env` and fill it in.
 
 ```bash
 git clone https://github.com/neeraj-gs/CourseGen-AI.git
-cd CourseGen-AI/coursegen-ai
+cd CourseGen-AI
 npm install
 cp .env.example .env      # then fill in the values
 npm run db:push           # creates the tables in your database
@@ -75,8 +75,13 @@ Open http://localhost:3000. Check http://localhost:3000/api/health to confirm th
 
 1. Push this repo to GitHub.
 2. **New Project** in Vercel → import the repo.
-3. Set **Root Directory** to `coursegen-ai`. *(The Next.js app is not at the repo root — this step is easy to miss and the build will fail without it.)*
-4. Deploy. That's it — no environment variables required.
+3. Deploy. That's it — no environment variables required.
+
+Leave **Root Directory** at the repo root. The Next.js app lives there, so Vercel
+detects the framework on its own. (It used to sit in a `coursegen-ai/`
+subdirectory, which meant an easily-missed Root Directory setting; get that wrong
+and the build finishes in under a second, deploys an empty output, and every
+route returns `404: NOT_FOUND`.)
 
 The landing page is statically prerendered, and the demo video only downloads when a visitor presses play.
 
@@ -101,7 +106,6 @@ Course generation calls OpenAI several times, so `/api/course/createChapters` an
 ## Deploy with Docker
 
 ```bash
-cd coursegen-ai
 docker build -t coursegen-ai .
 docker run -p 3000:3000 --env-file .env coursegen-ai
 ```
@@ -112,13 +116,13 @@ The Dockerfile builds with `output: 'standalone'` (enabled by `DOCKER_BUILD=1`) 
 
 ## Screenshots
 
-![CourseGenX-AI](./coursegen-ai/public/Screenshots/1.png)
+![CourseGenX-AI](./public/Screenshots/1.png)
 
-![CourseGenX-AI](./coursegen-ai/public/Screenshots/2.png)
+![CourseGenX-AI](./public/Screenshots/2.png)
 
-![CourseGenX-AI](./coursegen-ai/public/Screenshots/3.png)
+![CourseGenX-AI](./public/Screenshots/3.png)
 
-![CourseGenX-AI](./coursegen-ai/public/Screenshots/4.png)
+![CourseGenX-AI](./public/Screenshots/4.png)
 
 ---
 
