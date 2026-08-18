@@ -25,7 +25,7 @@ const DemoVideo = ({ duration }: Props) => {
 
   return (
     <figure className="w-full">
-      <div className="relative overflow-hidden border rounded-xl border-rule dark:border-white/15 bg-ink">
+      <div className="relative overflow-hidden border border-splice bg-bench dark:border-white/[0.09]">
         <video
           ref={videoRef}
           src="/Course.mp4"
@@ -46,16 +46,17 @@ const DemoVideo = ({ duration }: Props) => {
             type="button"
             onClick={start}
             aria-label={`Play the ${duration} product demo`}
-            className="absolute inset-0 grid transition-colors group place-items-center bg-ink/35 hover:bg-ink/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-grass focus-visible:ring-inset"
+            className="group absolute inset-0 grid place-items-center bg-bench/35 transition-colors hover:bg-bench/20"
           >
-            <span className="grid transition-transform rounded-full shadow-lg place-items-center size-16 sm:size-20 bg-grass motion-safe:group-hover:scale-105">
-              <Play className="text-white size-7 sm:size-8 fill-white ms-1" />
+            {/* Square, because nothing else on this page is round. */}
+            <span className="grid h-16 w-16 place-items-center bg-emulsion transition-transform motion-safe:group-hover:scale-[1.06] sm:h-20 sm:w-20">
+              <Play className="ms-1 h-6 w-6 fill-lightbox text-lightbox sm:h-7 sm:w-7" />
             </span>
           </button>
         )}
       </div>
 
-      <figcaption className="flex items-center justify-between gap-4 px-1 mt-3 font-mono text-xs tracking-wide uppercase text-mute dark:text-white/50">
+      <figcaption className="mt-3 flex items-center justify-between gap-4 font-data text-[10px] font-light uppercase tracking-[0.22em] text-dust">
         <span>Course.mp4 — full run, unedited</span>
         <span aria-hidden="true">{duration}</span>
       </figcaption>
